@@ -8,6 +8,17 @@ module bookzone-example {
   } 
   revision 2025-12-15 { 
     description 
+      "Added status information about books and purchases, see 
+      /books/book/popularity 
+      /books/book/formats/number-of-copies 
+      /users/user/purchase-history 
+      Turned reference to book title & format into a grouping, 
+      updated references in 
+      /users/user/purchase 
+      /shipping"; 
+  }
+  revision 2025-12-15 { 
+    description 
       "Added action purchase and notification shipping."; 
   }
   revision 2025-12-11 { 
@@ -89,12 +100,7 @@ module bookzone-example {
     reference 
 "https://en.wikipedia.org/wiki/International_Standard_Book_Number";
   } 
-  notification shipping { 
-    leaf user { 
-      type leafref { 
-        path /users/user/name; 
-      } 
-    } 
+  grouping title-format-ref { 
     leaf title { 
       type leafref { 
         path /books/book/title; 
@@ -105,6 +111,14 @@ module bookzone-example {
         path /books/book/format/format-id; 
       } 
     } 
+  } 
+  notification shipping { 
+    leaf user { 
+      type leafref { 
+        path /users/user/name; 
+      } 
+    } 
+    uses title-format-ref;
     leaf number-of-copies { 
       type uint32; 
     } 
@@ -153,7 +167,26 @@ module bookzone-example {
           } 
           units sim-dollar; 
         } 
+        container number-of-copies { 
+          config false; 
+          leaf in-stock { 
+            type uint32; 
+          } 
+          leaf reserved { 
+            type uint32; 
+          } 
+          leaf available { 
+            type uint32; 
+          } 
+        }
       } 
+      leaf popularity { 
+        config false; 
+        type uint32; 
+        units copies-sold/year; 
+        description 
+          "Number of copies sold in the last 12-month period"; 
+      }       
     } 
   } 
   container users { 
@@ -165,18 +198,20 @@ module bookzone-example {
       leaf name { 
         type string; 
       } 
+      list purchase-history { 
+        config false; 
+        key "title format"; 
+        uses title-format-ref; 
+        leaf transaction-date-time { 
+          type yang:date-and-time; 
+        } 
+        leaf copies { 
+          type uint32; 
+        } 
+      } 
       action purchase { 
         input { 
-          leaf title { 
-            type leafref { 
-              path /books/book/title; 
-            } 
-          } 
-          leaf format { 
-            type leafref { 
-              path /books/book/format/format-id; 
-            } 
-          } 
+          uses title-format-ref;
           leaf number-of-copies { 
             type uint32 { 
               range 1..999; 
