@@ -6,6 +6,10 @@ module bookzone-example {
   import ietf-yang-types { 
     prefix yang; 
   } 
+  revision 2025-12-15 { 
+    description 
+      "Added action purchase and notification shipping."; 
+  }
   revision 2025-12-11 { 
     description 
       "Added book formats, authors and users, see 
@@ -85,6 +89,26 @@ module bookzone-example {
     reference 
 "https://en.wikipedia.org/wiki/International_Standard_Book_Number";
   } 
+  notification shipping { 
+    leaf user { 
+      type leafref { 
+        path /users/user/name; 
+      } 
+    } 
+    leaf title { 
+      type leafref { 
+        path /books/book/title; 
+      } 
+    } 
+    leaf format { 
+      type leafref { 
+        path /books/book/format/format-id; 
+      } 
+    } 
+    leaf number-of-copies { 
+      type uint32; 
+    } 
+  }
   container authors { 
     list author { 
       key name; 

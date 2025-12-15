@@ -155,3 +155,77 @@ module: bookzone-example
 - `w` 表示输入参数
 
 ### Notification
+在上面的购买动作中，我们设计了一种`out-of-stock`（缺货）的输出结果，当返回这种结果时，我们的管理系统依然接受了订单，并且会在稍后进行派送，派送时会发送给用户一个通知，这在YANG模型中就叫做**Notification**。
+
+一个派送通知与购买行为类似，组成要素为表示购买者的`user`和表示被购买书籍的`book`以及购买数量的`nmber-of-copies`，整体来看可能是下面这样：
+```yang
+notification shipping { 
+  leaf user { 
+    type leafref { 
+      path /users/user/name; 
+    } 
+  } 
+  leaf title { 
+    type leafref { 
+      path /books/book/title; 
+    } 
+  } 
+  leaf format { 
+    type leafref { 
+      path /books/book/format/format-id; 
+    } 
+  } 
+  leaf number-of-copies { 
+    type uint32; 
+  } 
+}
+```
+**Notification**与**RPC**类似，定义于模块顶层，将这个**Notification**添加到我们已经构造的yang文件中，再次使用pyang查看下树状结构：
+```sh
+> pyang -f tree .\bookzone-example.yang
+  +--rw authors
+  |  +--rw author* [name]
+  |     +--rw name          string
+  |     +--rw account-id?   uint32
+  +--rw books
+  |  +--rw book* [title]
+  |     +--rw title       string
+  |     +--rw author?     -> /authors/author/name
+  |     +--rw language?   language-type
+  |     +--rw format* [isbn]
+  |        +--rw isbn         ISBN-10-or-13      
+  |        +--rw format-id    identityref
+  |        +--rw price?       decimal64
+  +--rw users
+     +--rw user* [user-id]
+        +--rw user-id     string
+        +--rw name?       string
+        +---x purchase
+           +---w input
+           |  +---w title?              -> /books/book/title
+           |  +---w format?             -> /books/book/format/format-id
+           |  +---w number-of-copies?   uint32
+           +--ro output
+              +--ro (outcome)?
+                 +--:(success)
+                 |  +--ro success?        empty
+                 |  +--ro delivery-url?   string
+                 +--:(out-of-stock)
+                 |  +--ro out-of-stock?   empty
+                 +--:(failure)
+                    +--ro failure?        string
+
+  notifications:
+    +---n shipping
+       +--ro user?               -> /users/user/name
+       +--ro title?              -> /books/book/title
+       +--ro format?             -> /books/book/format/format-id
+       +--ro number-of-copies?   uint32
+```
+同时在yang文件前面添加`revision`修订记录：
+```yang
+revision 2025-12-15 { 
+  description 
+    "Added action purchase and notification shipping."; 
+}
+```
