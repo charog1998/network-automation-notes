@@ -141,6 +141,53 @@ module bookzone-example {
       leaf name { 
         type string; 
       } 
+      action purchase { 
+        input { 
+          leaf title { 
+            type leafref { 
+              path /books/book/title; 
+            } 
+          } 
+          leaf format { 
+            type leafref { 
+              path /books/book/format/format-id; 
+            } 
+          } 
+          leaf number-of-copies { 
+            type uint32 { 
+              range 1..999; 
+            } 
+          } 
+        } 
+        output { 
+          choice outcome { 
+            case success { 
+              leaf success { 
+                type empty; 
+                description 
+                  "Order received and will be sent to specified user. 
+                  File orders are downloadable at the URL given below."; 
+              } 
+              leaf delivery-url { 
+                type string; 
+                description 
+                  "Download URL for file deliveries."; 
+              } 
+            } 
+            leaf out-of-stock { 
+              type empty; 
+              description 
+                "Order received, but cannot be delivered at this time. 
+                A notification will be sent when the item ships."; 
+            } 
+            leaf failure { 
+              type string; 
+              description 
+                "Order cancelled, for reason stated here."; 
+            } 
+          } 
+        } 
+      }
     } 
   } 
 }
