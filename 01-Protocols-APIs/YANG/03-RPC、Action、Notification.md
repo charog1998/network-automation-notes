@@ -222,7 +222,7 @@ notification shipping {
        +--ro format?             -> /books/book/format/format-id
        +--ro number-of-copies?   uint32
 ```
-同时在yang文件前面添加`revision`修订记录：
+同时在yang文件前面添加`revision`来记录每次修订的时间和内容：
 ```yang
 revision 2025-12-15 { 
   description 
