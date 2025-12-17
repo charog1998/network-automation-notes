@@ -6,7 +6,19 @@ module bookzone-example {
   import ietf-yang-types { 
     prefix yang; 
   } 
-  revision 2025-12-15 { 
+  organization 
+    "BookZone, a fictive book store chain";
+  revision 2025-12-17 { 
+    description 
+      "Added constraints that 
+      - author needs to have an account set before listing a book 
+      - number of copies in stock only shows for physical items 
+      - makes a book not orderable unless it has a price 
+      - book leafrefs are chained correctly 
+      Added /users/user/payment-methods and a way to choose which 
+      one to use in action purchase."; 
+  } 
+  revision 2025-12-16 { 
     description 
       "Added status information about books and purchases, see 
       /books/book/popularity 
@@ -108,7 +120,7 @@ module bookzone-example {
     } 
     leaf format { 
       type leafref { 
-        path /books/book/format/format-id; 
+        path /books/book[title=current()/../title]/format/format-id; 
       } 
     } 
   } 
@@ -143,15 +155,24 @@ module bookzone-example {
         type string; 
       } 
       leaf author { 
+        mandatory true;
         type leafref { 
           path /authors/author/name; 
         } 
+        must 'deref(current())/../account-id' { 
+          error-message 
+            "This author does not yet have an account-id defined. 
+            Books cannot be added for authors lacking one. 
+            The Finance Department is responsible for assigning 
+            account-id's to authors."; 
+        }
       } 
       leaf language { 
         type language-type; 
       } 
       list format { 
         key isbn; 
+        unique format-id;
         leaf isbn { 
           type ISBN-10-or-13; 
         } 
@@ -168,6 +189,7 @@ module bookzone-example {
           units sim-dollar; 
         } 
         container number-of-copies { 
+          when 'not(derived-from(../format-id, "bz:file-idty"))'; 
           config false; 
           leaf in-stock { 
             type uint32; 
@@ -209,15 +231,48 @@ module bookzone-example {
           type uint32; 
         } 
       } 
+      container payment-methods { 
+        list payment-method { 
+          key "method id"; 
+          leaf method { 
+            type enumeration { 
+              enum bookone-account; 
+              enum credit-card; 
+              enum paypal; 
+              enum klarna; 
+            } 
+          } 
+          leaf id { 
+            type string; 
+          } 
+        } 
+      }
       action purchase { 
-        input { 
+        input {
+          must "deref(format)/../price>0" { 
+            error-message "Item not orderable at this time"; 
+          } 
           uses title-format-ref;
           leaf number-of-copies { 
             type uint32 { 
               range 1..999; 
             } 
-          } 
-        } 
+            default 1;
+          }
+          container payment { 
+            leaf method { 
+              type leafref { 
+                path ../../../payment-methods/payment-method/method; 
+              } 
+            } 
+            leaf id { 
+              type leafref { 
+                path "../../../payment-methods/"+ 
+                    "payment-method[method=current()/../method]/id";  
+              } 
+            }
+          }
+        }
         output { 
           choice outcome { 
             case success { 
