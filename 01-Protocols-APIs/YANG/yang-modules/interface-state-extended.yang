@@ -1,0 +1,33 @@
+module interface-state-extended {
+  namespace "urn:example:interface-state-extended";
+  prefix "if-ext";
+  yang-version 1.1;
+  import ietf-interfaces {
+    prefix if;
+    revision-date "2018-02-20";
+  }
+
+  revision "2025-12-18" { 
+    description "Fixed extension syntax errors"; 
+  }
+
+  // ========== 扩展定义 ==========
+  extension health-score-rule {
+    description "Mark health score with alarm thresholds (format: health:alarm)";
+    argument "thresholds";
+    status current;
+  }
+
+  // ========== 扩展使用 ==========
+  augment "/if:interfaces/if:interface" {
+    description "Add health score with alarm rule";
+    leaf health-score {
+      if-ext:health-score-rule "90:60";  
+      type uint8 { 
+        range "0..100"; 
+      }
+      default 75;
+      description "Interface health score (0-100). Thresholds: health=90, alarm=60";
+    }
+  }
+}

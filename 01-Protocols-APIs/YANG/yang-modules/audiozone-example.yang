@@ -1,0 +1,52 @@
+module audiozone-example { 
+  yang-version 1.1; 
+  namespace 'http://example.com/ns/audioone'; 
+  prefix az; 
+
+  import bookzone-example { 
+    prefix bz; 
+  } 
+
+  import ietf-yang-types { 
+    prefix yang; 
+  } 
+
+  organization 
+    "AudioZone, a subsidiary of the fictive book store chain BookZone"; 
+  description 
+    "AudioZone defines this model to provide a standard interface for 
+     inventory browser and management applications. This module extends 
+     the bookone-example.yang module.";
+
+  revision 2025-12-18 { 
+    description "Initial revision."; 
+  }
+  identity streaming { 
+    base bz:file-idty; 
+    description 
+        "Audiobook streaming."; 
+    }
+  augment /bz:books/bz:book { 
+    list recommendations { 
+      key review-date; 
+      leaf review-date { 
+        type yang:date-and-time; 
+      } 
+      leaf score { 
+        type uint32 { 
+          range 1..5; 
+        } 
+      } 
+      leaf review-comment { 
+        type string; 
+      } 
+    } 
+  }
+  augment /bz:users/bz:user { 
+    leaf-list friends { 
+      type leafref { 
+        path /bz:users/bz:user/bz:name; 
+      } 
+    } 
+  }
+}
