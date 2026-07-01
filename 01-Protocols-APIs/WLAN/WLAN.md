@@ -68,7 +68,7 @@ HAP和HAC之间通过CAPWAP隧道封装，报文无需返回HAP，直接通过HA
 
 ### WLAN基础与漫游配置实操
 
-![alt text](img/WLAN配置实验.png)
+![alt text](../../98-Notebook-Images/WLAN配置实验.png)
 
 #### 数据规划
 

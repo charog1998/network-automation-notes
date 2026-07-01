@@ -86,7 +86,7 @@ RSTP通过 P/A机制加快了上游端口进入Forwarding状态的速度
 
 1. 每一台交换机都认为自己是根桥并发送RSTP，同时把每台设备都设为指定端口/Discarding状态
 2. 各设备间进行P/A协商，桥ID更优的设备成为根桥，根桥（指定端口）<-->（根端口）非根桥交换机
-![alt text](img/RSTP-收敛结果.png)
+![alt text](../../98-Notebook-Images/RSTP-收敛结果.png)
 
 ### RSTP常用命令
 
@@ -127,7 +127,7 @@ MSTP把一个交换网络划分为多个MSTP域，每个域内形成一棵或多
 3. 具有相同的VLAN和实例之间的映射配置
 4. 具有相同的MSTP修订级别配置
 
-![MSTP-实例](img/MSTP-实例.png)
+![MSTP-实例](../../98-Notebook-Images/MSTP-实例.png)
 
 在一个域内配置多个实例，每个实例对应一棵生成树，每棵生成树有不同的根桥
 

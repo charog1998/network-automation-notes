@@ -51,7 +51,7 @@ Initialize-->Backup: 收到Startup且优先级小于为255
 
 **拓扑图**
 
-![alt text](img/VRRP实验拓扑.png)
+![alt text](../../98-Notebook-Images/VRRP实验拓扑.png)
 
 *交换机型号为H3C S6850*
 

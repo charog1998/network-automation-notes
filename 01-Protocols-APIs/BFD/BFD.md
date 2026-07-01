@@ -10,7 +10,7 @@ BFD本质上是一个简单的Hello协议，即超时不应答就可认为连接
 
 每个BFD系统根据自身的状态和收到的对端BFD报文中的State字段来进行转换
 
-![alt text](img/BFD状态转移图.png)
+![alt text](../../98-Notebook-Images/BFD状态转移图.png)
 
 Init：表示本端期望进入Up状态，但远端暂时没回应
 Up：表示BFD会话成功建立，并正在确认链路连通性
