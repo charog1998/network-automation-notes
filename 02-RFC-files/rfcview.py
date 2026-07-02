@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
-RFC Page Viewer — 基于 Textual 的交互式 RFC 分页阅读器
+RFC Page Viewer — 基于 Textual 的交互式 RFC 分页阅读器 + 文件浏览器
 
 利用 RFC 文档的标准页眉/页脚自动切割页面，在终端中逐页浏览原文。
 
 用法：
-  python rfcview.py rfc7348-vxlan.txt
-  python rfcview.py rfc4271-bgp4.txt -p 50    # 从第 50 页开始
-  textual run rfcview.py -- file.txt          # Dev 模式（热重载）
+  python rfcview.py                            # 文件浏览器模式（默认）
+  python rfcview.py rfc7348-vxlan.txt          # 直接打开文件
+  python rfcview.py rfc4271-bgp4.txt -p 50     # 从第 50 页开始
+  textual run rfcview.py -- file.txt           # Dev 模式（热重载）
 """
 
 import re
@@ -20,7 +21,7 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import VerticalScroll
 from textual.screen import ModalScreen
-from textual.widgets import Header, Footer, Static, Input
+from textual.widgets import Header, Footer, Static, Input, ListView, ListItem, Label
 
 
 # ── RFC 文档解析 ────────────────────────────────────────
@@ -212,6 +213,221 @@ class HelpScreen(ModalScreen[None]):
 
     def action_dismiss_help(self):
         self.dismiss(None)
+
+
+# ── Modal 弹窗：文件浏览器帮助 ──────────────────────────
+
+class FileBrowserHelpScreen(ModalScreen[None]):
+    BINDINGS = [
+        Binding("escape", "dismiss_help", "返回", priority=True),
+    ]
+
+    def compose(self) -> ComposeResult:
+        with VerticalScroll():
+            yield Static(dedent("""\
+            [bold]RFC File Browser — 按键说明[/]
+
+            [bold]导航[/]
+              ↑ / k              上移
+              ↓ / j              下移
+              Enter              打开文件 / 进入目录
+              ← / Backspace      返回上级目录
+
+            [bold]功能[/]
+              h / ?              显示此帮助
+              q / Esc            退出
+
+            [bold]提示[/]
+              选择 .txt 文件后将自动打开 RFC 阅读器。
+              关闭阅读器后自动返回文件浏览器。
+            """), id="help-text")
+
+    def action_dismiss_help(self):
+        self.dismiss(None)
+
+
+# ── 文件浏览器应用 ────────────────────────────────────────
+
+class FileBrowserApp(App):
+    """交互式文件浏览器 — 用光标选择文件/文件夹，Enter 打开"""
+
+    CSS = """
+    #path-label {
+        padding: 0 1;
+        height: 1;
+        background: $surface;
+        color: $text-muted;
+        text-style: italic;
+    }
+
+    #file-list {
+        height: 1fr;
+        border: none;
+    }
+
+    #file-list > ListItem {
+        padding: 0 1;
+    }
+
+    #file-list > ListItem.--highlight {
+        background: $accent 30%;
+        color: $text;
+    }
+
+    #hint-bar {
+        padding: 0 1;
+        height: 1;
+        background: $surface;
+        color: $text-muted;
+    }
+
+    FileBrowserHelpScreen {
+        align: center middle;
+    }
+    FileBrowserHelpScreen > VerticalScroll {
+        width: 50;
+        height: auto;
+        max-height: 30;
+        background: $surface;
+        border: thick $primary;
+        padding: 1 2;
+    }
+    """
+
+    BINDINGS = [
+        Binding("backspace,left", "parent_dir", "上级目录", show=True),
+        Binding("q,escape", "quit", "退出", show=True),
+        Binding("h,question_mark", "show_help", "帮助", show=True),
+        Binding("up,k", "cursor_up", "上移", show=False),
+        Binding("down,j", "cursor_down", "下移", show=False),
+        Binding("enter", "select_entry", "打开", show=True, priority=True),
+    ]
+
+    def __init__(self, start_dir: str = "."):
+        self.current_dir = os.path.abspath(start_dir)
+        self.selected_file: str | None = None
+        self._entries: list[tuple[str, bool, str]] = []  # (name, is_dir, full_path)
+        super().__init__()
+
+    def compose(self) -> ComposeResult:
+        yield Header()
+        yield Static("", id="path-label")
+        yield ListView(id="file-list")
+        yield Static(
+            "↑↓/jk 移动  Enter 打开  ←/Backspace 上级  q 退出  h 帮助",
+            id="hint-bar")
+        yield Footer()
+
+    def on_mount(self):
+        self.title = "RFC File Browser"
+        self._refresh_list()
+
+    def _refresh_list(self):
+        lv = self.query_one("#file-list", ListView)
+        lv.clear()
+        self._entries.clear()
+
+        # 更新路径显示
+        short = self.current_dir
+        home = os.path.expanduser("~")
+        if short.startswith(home):
+            short = "~" + short[len(home):]
+        self.query_one("#path-label", Static).update(f" 📂 {short}")
+
+        # 上级目录入口
+        parent = os.path.dirname(self.current_dir)
+        if parent != self.current_dir:
+            self._entries.append(("..", True, parent))
+            lv.append(ListItem(Label("📁 ../")))
+
+        try:
+            entries = os.listdir(self.current_dir)
+        except PermissionError:
+            self.notify("无权限访问此目录", severity="error")
+            if not self._entries:
+                # 回退到上级
+                self.current_dir = parent
+                return self._refresh_list()
+            return
+
+        # 收集并分类
+        dirs_info = []
+        files_info = []
+        for e in entries:
+            full = os.path.join(self.current_dir, e)
+            try:
+                if os.path.isdir(full):
+                    dirs_info.append(e)
+                else:
+                    files_info.append(e)
+            except OSError:
+                continue
+
+        for d in sorted(dirs_info, key=str.lower):
+            full = os.path.join(self.current_dir, d)
+            self._entries.append((d, True, full))
+            lv.append(ListItem(Label(f"📁 {d}/")))
+
+        file_icons = {
+            '.txt': '📄', '.md': '📝', '.py': '🐍',
+            '.log': '📋', '.conf': '⚙', '.cfg': '⚙',
+            '.ini': '⚙', '.yaml': '⚙', '.yml': '⚙',
+            '.json': '📋', '.xml': '📋', '.html': '🌐',
+            '.css': '🎨', '.js': '📜', '.sh': '🔧',
+            '.pdf': '📕', '.zip': '📦', '.tar': '📦',
+            '.gz': '📦', '.bz2': '📦', '.7z': '📦',
+            '.jpg': '🖼', '.png': '🖼', '.gif': '🖼',
+        }
+
+        for f in sorted(files_info, key=str.lower):
+            full = os.path.join(self.current_dir, f)
+            self._entries.append((f, False, full))
+            ext = os.path.splitext(f)[1].lower()
+            icon = file_icons.get(ext, '📎')
+            lv.append(ListItem(Label(f"{icon} {f}")))
+
+        # 聚焦列表并选中第一项
+        if lv.children:
+            lv.index = 0
+        lv.focus()
+
+    # ── 导航动作 ──
+
+    def action_cursor_up(self):
+        lv = self.query_one("#file-list", ListView)
+        if lv.index is not None and lv.index > 0:
+            lv.index -= 1
+
+    def action_cursor_down(self):
+        lv = self.query_one("#file-list", ListView)
+        if lv.index is not None and lv.index < len(lv.children) - 1:
+            lv.index += 1
+
+    def action_select_entry(self):
+        """Enter 键：打开文件或进入目录"""
+        if self.selected_file is not None:
+            return  # 防止重复触发
+        lv = self.query_one("#file-list", ListView)
+        if lv.index is None or lv.index >= len(self._entries):
+            return
+
+        name, is_dir, full_path = self._entries[lv.index]
+        if is_dir:
+            self.current_dir = full_path
+            self._refresh_list()
+        else:
+            self.selected_file = full_path
+            self.exit()
+
+    def action_parent_dir(self):
+        """返回上级目录"""
+        parent = os.path.dirname(self.current_dir)
+        if parent != self.current_dir:
+            self.current_dir = parent
+            self._refresh_list()
+
+    def action_show_help(self):
+        self.push_screen(FileBrowserHelpScreen())
 
 
 # ── 主应用 ──────────────────────────────────────────────
@@ -469,18 +685,34 @@ class RfcViewerApp(App):
 def main():
     import argparse
     parser = argparse.ArgumentParser(
-        description='RFC Page Viewer — 交互式 RFC 分页阅读器 (基于 Textual)')
-    parser.add_argument('file', help='RFC .txt 文件路径')
+        description='RFC Page Viewer — 交互式 RFC 分页阅读器 + 文件浏览器')
+    parser.add_argument('file', nargs='?', default=None,
+                        help='RFC .txt 文件路径 (不提供则启动文件浏览器)')
     parser.add_argument('-p', '--page', type=int, default=1,
                         help='起始页码 (默认: 1)')
+
     args = parser.parse_args()
 
-    if not os.path.exists(args.file):
-        print(f'文件不存在: {args.file}')
-        sys.exit(1)
-
-    app = RfcViewerApp(args.file, start_page=args.page - 1)
-    app.run()
+    if args.file:
+        # ── 模式 1：直接打开指定文件 ──
+        if not os.path.exists(args.file):
+            print(f'文件不存在: {args.file}')
+            sys.exit(1)
+        app = RfcViewerApp(args.file, start_page=args.page - 1)
+        app.run()
+    else:
+        # ── 模式 2：文件浏览器（默认）──
+        while True:
+            browser = FileBrowserApp()
+            browser.run()
+            if browser.selected_file:
+                # 用户选择了文件 → 打开 RFC 阅读器
+                viewer = RfcViewerApp(browser.selected_file)
+                viewer.run()
+                # 阅读器关闭后回到浏览器
+            else:
+                # 用户按 q 退出
+                break
 
 
 if __name__ == '__main__':
