@@ -61,7 +61,8 @@ def parse_rfc(filepath: str) -> dict:
         s = line.strip()
         if not date_seen:
             if re.search(r'(^|\s)(January|February|March|April|May|June|July|'
-                     r'August|September|October|November|December)\s+\d{4}', s):
+                     r'August|September|October|November|December|'
+                     r'Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}', s):
                 date_seen = True
             continue
         if not s:
@@ -127,7 +128,52 @@ class GotoScreen(ModalScreen[int | None]):
     """输入页码后按 Enter 跳转"""
 
     BINDINGS = [
-        Binding("escape,q", "dismiss_none", "取消", priority=True),
+        Binding("escape,q,Q", "dismiss_none", "取消", priority=True),
+    ]
+
+    def __init__(self, max_page: int):
+        super().__init__()
+        self.max_page = max_page
+
+    def compose(self) -> ComposeResult:
+        with VerticalScroll():
+            yield Static(f'跳转到页 (1–{self.max_page})', id="goto-label")
+            yield Input(placeholder='输入页码...', id="goto-input")
+
+    def on_mount(self):
+        self.query_one(Input).focus()
+
+    @on(Input.Submitted)
+    def _on_input_submit(self):
+        """Input 内按 Enter 时触发"""
+        self._do_go()
+
+    def _do_go(self):
+        inp = self.query_one(Input)
+        try:
+            n = int(inp.value)
+            if 1 <= n <= self.max_page:
+                self.dismiss(n)
+            else:
+                inp.value = ''
+                self.app.clear_notifications()
+                self.notify(f'页码范围: 1–{self.max_page}', severity='warning')
+        except ValueError:
+            inp.value = ''
+            self.app.clear_notifications()
+            self.notify('请输入数字', severity='warning')
+
+    def action_dismiss_none(self):
+        self.dismiss(None)
+
+
+# ── Modal 弹窗：搜索 ────────────────────────────────────
+
+class SearchScreen(ModalScreen[str | None]):
+    """输入关键词后 Enter 搜索"""
+
+    BINDINGS = [
+        Binding("escape,q,Q", "dismiss_none", "取消", priority=True),
     ]
 
     def compose(self) -> ComposeResult:
@@ -143,7 +189,8 @@ class GotoScreen(ModalScreen[int | None]):
         if event.value.strip():
             self.dismiss(event.value.strip())
         else:
-            self.dismiss(None)
+            self.app.clear_notifications()
+            self.notify('请输入关键词', severity='warning')
 
     def action_dismiss_none(self):
         self.dismiss(None)
@@ -155,9 +202,9 @@ class TocScreen(ModalScreen[int | None]):
     """目录导航弹窗——选择章节跳转"""
 
     BINDINGS = [
-        Binding("escape,q", "dismiss_none", "取消", priority=True),
-        Binding("up,k", "cursor_up", "上移", show=False),
-        Binding("down,j", "cursor_down", "下移", show=False),
+        Binding("escape,q,Q", "dismiss_none", "取消", priority=True),
+        Binding("up,k,K", "cursor_up", "上移", show=False),
+        Binding("down,j,J", "cursor_down", "下移", show=False),
     ]
 
     def __init__(self, toc_entries: list[tuple[str, int]]):
@@ -232,7 +279,7 @@ class TocScreen(ModalScreen[int | None]):
 
 class HelpScreen(ModalScreen[None]):
     BINDINGS = [
-        Binding("escape,q", "dismiss_help", "返回", priority=True),
+        Binding("escape,q,Q", "dismiss_help", "返回", priority=True),
     ]
 
     def compose(self) -> ComposeResult:
@@ -261,8 +308,7 @@ class HelpScreen(ModalScreen[None]):
               q / Esc              退出
 
             [bold]提示[/]
-              - 搜索到的关键词会高亮显示，当前匹配为黄色。
-              - 在最后一个匹配处继续按 , 会跨页搜索下一页。
+              - 搜索到的关键词会以黄色高亮显示。
               - 页面按 RFC 原文的换页符 (form feed) 切割。
             """), id="help-text")
 
@@ -274,7 +320,7 @@ class HelpScreen(ModalScreen[None]):
 
 class FileBrowserHelpScreen(ModalScreen[None]):
     BINDINGS = [
-        Binding("escape,q", "dismiss_help", "返回", priority=True),
+        Binding("escape,q,Q", "dismiss_help", "返回", priority=True),
     ]
 
     def compose(self) -> ComposeResult:
@@ -353,11 +399,11 @@ class FileBrowserApp(App):
 
     BINDINGS = [
         Binding("backspace,left", "parent_dir", "上级目录", show=True),
-        Binding("q,escape", "quit", "退出", show=True),
-        Binding("s", "cycle_sort", "排序", show=True),
-        Binding("h,question_mark", "show_help", "帮助", show=True),
-        Binding("up,k", "cursor_up", "上移", show=False),
-        Binding("down,j", "cursor_down", "下移", show=False),
+        Binding("q,Q,escape", "quit", "退出", show=True),
+        Binding("s,S", "cycle_sort", "排序", show=True),
+        Binding("h,H,question_mark", "show_help", "帮助", show=True),
+        Binding("up,k,K", "cursor_up", "上移", show=False),
+        Binding("down,j,J", "cursor_down", "下移", show=False),
         Binding("enter", "select_entry", "打开", show=True, priority=True),
     ]
 
@@ -530,7 +576,7 @@ class FileBrowserApp(App):
 
     def on_click(self, event):
         """双击打开文件"""
-        if not isinstance(event.widget, ListItem):
+        if not any(isinstance(w, ListItem) for w in event.widget.ancestors_with_self):
             return
         lv = self.query_one("#file-list", ListView)
         if lv.index is None:
@@ -646,20 +692,20 @@ class RfcViewerApp(App):
     """
 
     BINDINGS = [
-        Binding("n,right,space,j", "next_page", "下一页", show=True),
-        Binding("p,left,backspace,k", "prev_page", "上一页", show=True),
-        Binding("g", "goto_page", "跳转", show=True),
-        Binding("t", "show_toc", "目录", show=True),
+        Binding("n,N,right,space,j,J", "next_page", "下一页", show=True),
+        Binding("p,P,left,backspace,k,K", "prev_page", "上一页", show=True),
+        Binding("g,G", "goto_page", "跳转", show=True),
+        Binding("t,T", "show_toc", "目录", show=True),
         Binding("slash", "search", "搜索", show=True),
-        Binding("m", "set_bookmark", "标记", show=True),
+        Binding("m,M", "set_bookmark", "标记", show=True),
         Binding("apostrophe", "jump_bookmark", "跳回", show=True),
-        Binding("l", "toggle_line_numbers", "行号", show=True),
-        Binding("h,question_mark", "show_help", "帮助", show=True),
+        Binding("l,L", "toggle_line_numbers", "行号", show=True),
+        Binding("h,H,question_mark", "show_help", "帮助", show=True),
         Binding("pagedown", "next_5", "前进 5 页", show=False),
         Binding("pageup", "prev_5", "后退 5 页", show=False),
         Binding("home", "first_page", "首页", show=False),
         Binding("end", "last_page", "末页", show=False),
-        Binding("q,escape", "quit", "退出", show=True),
+        Binding("q,Q,escape", "quit", "退出", show=True),
     ]
 
     def __init__(self, filepath: str, start_page: int = 0):
@@ -787,7 +833,7 @@ class RfcViewerApp(App):
             self.refresh_page()
             self.notify(
                 f'搜索 "{term}" — '
-                f'{len(self._search_matches)} 个匹配')
+                f'本页中有 {len(self._search_matches)} 个匹配')
         elif term is None:
             pass
 
