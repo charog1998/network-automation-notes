@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>阿里云ACP网络工程师 · 文档索引</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --card: #fff;
+    --text: #333;
+    --muted: #888;
+    --border: #e8e8e8;
+    --blue: #0070f3;
+    --tag-bg: #eef2ff;
+    --tag-text: #4f46e5;
+    --warn-bg: #fff7ed;
+    --warn-text: #c2410c;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 20px; }
+  .container { max-width: 1000px; margin: 0 auto; }
+  h1 { font-size: 24px; margin-bottom: 4px; }
+  .subtitle { color: var(--muted); margin-bottom: 24px; font-size: 14px; }
+  .section { margin-bottom: 28px; }
+  .section-title { font-size: 18px; font-weight: 700; padding: 8px 0; border-bottom: 2px solid var(--blue); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .weight { font-size: 12px; background: var(--blue); color: #fff; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+  .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 10px; }
+  .product-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; transition: box-shadow .15s; }
+  .product-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+  .product-card h3 { font-size: 15px; margin-bottom: 6px; }
+  .product-card h3 a { color: var(--blue); text-decoration: none; }
+  .product-card h3 a:hover { text-decoration: underline; }
+  .product-card .desc { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .product-card .links { display: flex; flex-wrap: wrap; gap: 6px; }
+  .product-card .links a { font-size: 12px; background: var(--tag-bg); color: var(--tag-text); padding: 2px 10px; border-radius: 4px; text-decoration: none; white-space: nowrap; }
+  .product-card .links a:hover { opacity: .8; }
+  .product-card .links a.important { background: var(--warn-bg); color: var(--warn-text); font-weight: 600; }
+  .note { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 14px 18px; font-size: 13px; margin-top: 20px; }
+  .note strong { color: #92400e; }
+  .stats { display: flex; gap: 20px; margin-bottom: 24px; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; text-align: center; }
+  .stat .num { font-size: 28px; font-weight: 800; color: var(--blue); }
+  .stat .label { font-size: 12px; color: var(--muted); }
+  .toc { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; }
+  .toc a { color: var(--blue); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>📚 阿里云 ACP 网络工程师 · 官方文档索引</h1>
+<p class="subtitle">Alibaba Cloud Certified Networking – Professional · 按考试大纲组织</p>
+
+<div class="stats">
+  <div class="stat"><div class="num">23</div><div class="label">产品/主题</div></div>
+  <div class="stat"><div class="num">~90</div><div class="label">文档链接</div></div>
+  <div class="stat"><div class="num">100%</div><div class="label">考纲覆盖</div></div>
+</div>
+
+<div class="toc">
+  <strong>快速导航：</strong>
+  <a href="#s1">云上网络</a>
+  <a href="#s2">跨地域网络</a>
+  <a href="#s3">混合云网络</a>
+  <a href="#s4">CDN与DNS</a>
+  <a href="#s-security">云安全</a>
+  <a href="#s5">选型与规划设计</a>
+  <a href="#s6">延伸阅读</a>
+</div>
+
+<!-- ============ 云上网络 ============ -->
+<div class="section" id="s1">
+<div class="section-title">📁 云上网络 <span class="weight">考纲权重 37%</span></div>
+
+<div class="product-grid">
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/vpc/" target="_blank">专有网络 VPC</a> <span class="weight">8%</span></h3>
+  <p class="desc">隔离的云上私有网络，包含交换机、路由器、安全组等</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/vpc/product-overview/" target="_blank">产品概述</a>
+    <a href="https://help.aliyun.com/zh/vpc/vpc-user-guide/" target="_blank">用户指南</a>
+    <a href="https://help.aliyun.com/zh/vpc/product-billing/" target="_blank">计费</a>
+  </div>
+</div>
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/slb/" target="_blank">负载均衡 SLB</a> <span class="weight">12%</span></h3>
+  <p class="desc">包含 ALB / CLB / NLB / GWLB，分发流量到后端服务器</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/slb/product-overview/" target="_blank">产品概述</a>
+    <a href="https://help.aliyun.com/zh/slb/customer-use-cases/" target="_blank">客户案例</a>
+  </div>
+</div>
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/eip/" target="_blank">弹性公网 IP (EIP)</a> <span class="weight">10%</span></h3>
+  <p class="desc">独立的公网IP，可灵活绑定/解绑云资源</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/eip/product-overview/" target="_blank">产品概述</a>
+    <a href="https://help.aliyun.com/zh/eip/product-billing/" target="_blank">计费</a>
+    <a href="https://help.aliyun.com/zh/eip/cloud-resource-binding/" target="_blank">绑定云资源</a>
+  </div>
+</div>
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/nat-gateway/" target="_blank">NAT 网关</a> <span class="weight">5%</span></h3>
+  <p class="desc">SNAT（共享公网上网）和 DNAT（端口映射暴露服务）</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/nat-gateway/product-overview/" target="_blank">产品概述</a>
+    <a href="https://help.aliyun.com/zh/nat-gateway/user-guide/" target="_blank">用户指南</a>
+    <a href="https://help.aliyun.com/zh/nat-gateway/use-cases/" target="_blank">应用场景</a>
+  </div>
+</div>
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/internet-shared-bandwidth/" target="_blank">共享带宽</a> <span class="weight">2%</span></h3>
+  <p class="desc">多EIP共享同一带宽，降低成本</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/internet-shared-bandwidth/product-overview/" target="_blank">产品概述</a>
+  </div>
+</div>
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/dtp/" target="_blank">共享流量包</a> <span class="weight">2%</span></h3>
+  <p class="desc">预付费流量套餐，抵扣按量计费流量</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/dtp/product-overview/" target="_blank">产品概述</a>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============ 跨地域网络 ============ -->
+<div class="section" id="s2">
+<div class="section-title">📁 跨地域网络 <span class="weight">考纲权重 20%</span></div>
+
+<div class="product-grid">
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/cen/" target="_blank">云企业网 CEN</a> <span class="weight">10%</span></h3>
+  <p class="desc">全球多地域VPC互联、IDC专线接入，转发路由器TR</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/cen/product-overview/" target="_blank">产品概述</a>
+    <a href="https://help.aliyun.com/zh/cen/getting-started/" target="_blank">快速入门</a>
+    <a href="https://help.aliyun.com/zh/cen/user-guide/" target="_blank">用户指南</a>
+    <a href="https://help.aliyun.com/zh/cen/use-cases/" target="_blank">应用场景</a>
+  </div>
+</div>
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/ga/" target="_blank">全球加速 GA</a> <span class="weight">10%</span></h3>
+  <p class="desc">跨国/跨地域网络加速，智能路由就近接入</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/ga/product-overview/" target="_blank">产品概述</a>
+    <a href="https://help.aliyun.com/zh/ga/getting-started/" target="_blank">快速入门</a>
+    <a href="https://help.aliyun.com/zh/ga/user-guide/" target="_blank">用户指南</a>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============ 混合云网络 ============ -->
+<div class="section" id="s3">
+<div class="section-title">📁 混合云网络 <span class="weight">考纲权重 20%</span></div>
+
+<div class="product-grid">
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/sag/" target="_blank">智能接入网关 SAG</a> <span class="weight">15%</span></h3>
+  <p class="desc">线下分支/门店通过SD-WAN接入阿里云，权重最高的单品</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/sag/product-overview/" target="_blank">产品概述</a>
+    <a href="https://help.aliyun.com/zh/sag/user-guide/" target="_blank">用户指南</a>
+    <a href="https://help.aliyun.com/zh/sag/use-cases/" target="_blank">应用场景</a>
+  </div>
+</div>
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/vpn/" target="_blank">VPN 网关</a> <span class="weight">5%</span></h3>
+  <p class="desc">IPsec-VPN（站点到站点）和 SSL-VPN（点到站点）</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/vpn/product-overview/" target="_blank">产品概述</a>
+  </div>
+</div>
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/express-connect/" target="_blank">高速通道（专线）</a></h3>
+  <p class="desc">物理专线连接IDC到阿里云，高带宽低延迟</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/express-connect/product-overview/" target="_blank">产品概述</a>
+    <a href="https://help.aliyun.com/zh/express-connect/user-guide/" target="_blank">用户指南</a>
+    <a href="https://help.aliyun.com/zh/express-connect/use-cases/" target="_blank">应用场景</a>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============ CDN与DNS ============ -->
+<div class="section" id="s4">
+<div class="section-title">📁 CDN 与 DNS <span class="weight">考纲权重 8%</span></div>
+
+<div class="product-grid">
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/cdn/" target="_blank">CDN（内容分发网络）</a> <span class="weight">3%</span></h3>
+  <p class="desc">边缘节点缓存加速，静态/动态内容分发</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/cdn/product-overview/" target="_blank">产品概述</a>
+    <a href="https://help.aliyun.com/zh/cdn/user-guide/" target="_blank">用户指南</a>
+    <a href="https://help.aliyun.com/zh/cdn/use-cases/" target="_blank">应用场景</a>
+  </div>
+</div>
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/dns/" target="_blank">云解析 DNS</a> <span class="weight">2%</span></h3>
+  <p class="desc">公网权威DNS解析、智能解析、GTM全局流量管理</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/dns/start-using-dns2-0/" target="_blank">快速入门</a>
+    <a href="https://help.aliyun.com/zh/dns/resolution-services/" target="_blank">解析服务</a>
+  </div>
+</div>
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/product/64583.html" target="_blank">云解析 PrivateZone</a></h3>
+  <p class="desc">VPC内网域名解析，混合云DNS方案核心组件</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/product/64583.html" target="_blank">产品页</a>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============ 云安全 ============ -->
+<div class="section" id="s-security">
+<div class="section-title">🔒 云安全 <span class="weight">融合考查 ~5%</span></div>
+
+<div class="product-grid">
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/anti-ddos/" target="_blank">DDoS 防护</a></h3>
+  <p class="desc">DDoS高防IP/原生防护，抵御大流量DDoS攻击，考纲明确提及</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/anti-ddos/product-overview/" target="_blank">产品概述</a>
+    <a href="https://help.aliyun.com/zh/anti-ddos/user-guide/" target="_blank">用户指南</a>
+  </div>
+</div>
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/waf/" target="_blank">Web 应用防火墙 WAF</a></h3>
+  <p class="desc">Web攻击防护（SQL注入/XSS/CC攻击），与SLB/CDN联动部署</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/waf/product-overview/" target="_blank">产品概述</a>
+    <a href="https://help.aliyun.com/zh/waf/getting-started/" target="_blank">快速入门</a>
+  </div>
+</div>
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/cloud-firewall/" target="_blank">云防火墙</a></h3>
+  <p class="desc">南北向/东西向流量管控，VPC边界防火墙，入侵检测IPS</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/cloud-firewall/product-overview/" target="_blank">产品概述</a>
+    <a href="https://help.aliyun.com/zh/cloud-firewall/user-guide/" target="_blank">用户指南</a>
+  </div>
+</div>
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/ram/" target="_blank">访问控制 RAM</a></h3>
+  <p class="desc">RAM用户/角色/权限策略，网络操作的身份授权与资源级鉴权</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/ram/product-overview/" target="_blank">产品概述</a>
+    <a href="https://help.aliyun.com/zh/ram/user-guide/" target="_blank">用户指南</a>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============ 选型与规划设计 ============ -->
+<div class="section" id="s5">
+<div class="section-title">📁 选型与规划设计 <span class="weight">考纲权重 15%（场景分析）</span></div>
+
+<div class="product-grid">
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/product/2838866.html" target="_blank">网络服务选型指南</a></h3>
+  <p class="desc">📌 如何在不同场景下选择合适的网络产品，直接对应考纲"产品选型"考点</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/product/2838866.html" target="_blank">阅读指南</a>
+  </div>
+</div>
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/cloud-network-well-architected-design/" target="_blank">云网络规划设计</a></h3>
+  <p class="desc">📌 网络架构最佳实践、白皮书、场景方案，对应考纲"架构设计"考点</p>
+  <div class="links">
+    <a class="important" href="https://help.aliyun.com/zh/cloud-network-well-architected-design/cloud-network-product-foundation-solution/" target="_blank">产品基础方案</a>
+    <a href="https://help.aliyun.com/zh/cloud-network-well-architected-design/cloud-network-white-paper/" target="_blank">云网络白皮书</a>
+    <a href="https://help.aliyun.com/zh/cloud-network-well-architected-design/cloud-network-well-architecture-design-guide/" target="_blank">架构设计指南</a>
+    <a href="https://help.aliyun.com/zh/cloud-network-well-architected-design/scenario-based-solution-for-cloud-network/" target="_blank">场景化方案</a>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============ 延伸阅读 ============ -->
+<div class="section" id="s6">
+<div class="section-title">📁 延伸阅读</div>
+
+<div class="product-grid">
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/privatelink/" target="_blank">私网连接 PrivateLink</a></h3>
+  <p class="desc">通过VPC终端节点私网访问其他VPC的公共服务</p>
+  <div class="links">
+    <a href="https://help.aliyun.com/zh/privatelink/get-started/" target="_blank">快速入门</a>
+  </div>
+</div>
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/anycast-eip/" target="_blank">任播弹性公网 IP</a></h3>
+  <p class="desc">全球多地域共用一个IP，就近接入</p>
+  <div class="links">
+    <a href="https://help.aliyun.com/zh/anycast-eip/product-overview/" target="_blank">产品概述</a>
+  </div>
+</div>
+
+<div class="product-card">
+  <h3>🔗 <a href="https://help.aliyun.com/zh/ipv6-gateway/" target="_blank">IPv6 网关</a></h3>
+  <p class="desc">VPC的IPv6公网出入流量管理</p>
+  <div class="links">
+    <a href="https://help.aliyun.com/zh/ipv6-gateway/product-overview/" target="_blank">产品概述</a>
+  </div>
+</div>
+
+</div>
+</div>
+
+<div class="note">
+  <strong>💡 复习建议</strong><br>
+  ① 先通读 <a href="https://help.aliyun.com/zh/product/2838866.html" target="_blank">网络服务选型指南</a> 和 <a href="https://help.aliyun.com/zh/cloud-network-well-architected-design/" target="_blank">云网络规划设计</a>，建立全局认知<br>
+  ② 按考纲权重逐个精读：SAG(15%) → SLB(12%) → EIP(10%) → CEN(10%) → GA(10%) → VPC(8%) → NAT(5%) → VPN(5%) → 安全产品 → CDN(3%) → DNS(2%) → 共享带宽/流量包(2%)<br>
+  ③ 学完每个产品后，用题库对应题目自测（题库在 <code>acp_quiz</code> 目录下）<br>
+  ④ 场景分析(15%)：综合运用多个产品解决组网/上云/加速/安全问题<br>
+  ⑤ 🏷️ 网络基础（TCP/IP/路由交换/DNS/HTTP等）为通用IT知识，非阿里云特有，需自行评估是否需要复习
+</div>
+
+</div>
+</body>
+</html>
